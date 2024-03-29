@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">FlagGameTest</string>
+    <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_activity_guess_the_country">GuessTheCountryActivity</string>
+    <string name="title_activity_guess_hints">GuessHintsActivity</string>
+    <string name="title_activity_guess_the_flag">GuessTheFlagActivity</string>
+    <string name="title_activity_advanced_level">AdvancedLevelActivity</string>
+</resources>

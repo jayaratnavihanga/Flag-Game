@@ -1,0 +1,138 @@
+package com.example.flaggametest
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.mutableIntStateOf
+
+
+@Composable
+fun GameScreen() {
+    val context = LocalContext.current
+    val countries = remember { loadCountriesFromAssets(context) }
+    val currentCountry by remember { mutableStateOf(countries.random()) }
+    val countryToGuess = currentCountry.countryName
+    var guessedWord by remember { mutableStateOf("-".repeat(countryToGuess.length)) }
+    var remainingAttempts by remember { mutableIntStateOf(3) }
+    var userInput by remember { mutableStateOf(TextFieldValue()) }
+    var isNext by remember { mutableStateOf(false) }
+    var gameWon by remember { mutableStateOf(false) }
+
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        if (!gameWon) {
+            Image(
+                painter = painterResource(id = getDrawableResourceId(currentCountry.countryCode.lowercase())),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+            )
+
+            Text(text = countryToGuess)
+
+            Text(
+                text = guessedWord,
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            BasicTextField(
+                value = userInput,
+                onValueChange = {
+                    userInput = it
+                },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+            if (guessedWord != countryToGuess) {
+                Button(
+                    onClick = {
+                        if (userInput.text.isNotEmpty()) {
+                            if (countryToGuess.contains(userInput.text, ignoreCase = true)) {
+                                guessedWord = guessedWord.mapIndexed { index, char ->
+                                    if (countryToGuess[index].equals(
+                                            userInput.text[0],
+                                            ignoreCase = true
+                                        )
+                                    ) {
+                                        countryToGuess[index]
+                                    } else {
+                                        char
+                                    }
+                                }.joinToString("")
+                                if (guessedWord.equals(countryToGuess, ignoreCase = true)) {
+                                    isNext = true
+                                }
+                            } else {
+                                remainingAttempts--
+                                if (remainingAttempts == 0) {
+                                    guessedWord = countryToGuess
+                                }
+                            }
+                        }
+                        userInput = TextFieldValue()
+                    },
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text(text = "Submit")
+                }
+            }
+
+            if (remainingAttempts == 0) {
+                Text(
+                    text = "Wrong! The country is $countryToGuess",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                isNext = true
+            }
+
+            if (isNext) {
+                Text(
+                    text = "Correct!",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Button(
+                    onClick = {
+                        gameWon = true
+                    }, modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text(text = "Next")
+
+                }
+            }
+
+
+        }else{
+            GameScreen()
+        }
+    }
+}
+
+
+
