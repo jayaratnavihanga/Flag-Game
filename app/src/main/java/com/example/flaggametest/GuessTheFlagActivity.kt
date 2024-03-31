@@ -5,16 +5,27 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.flaggametest.ui.theme.FlagGameTestTheme
 
@@ -23,27 +34,42 @@ class GuessTheFlagActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             FlagGameTestTheme {
-                GuessTheFlag()
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    GuessTheFlag()
+                }
             }
         }
     }
+
+
+
+
 }
+
 
 @Composable
 fun GuessTheFlag() {
     val context = LocalContext.current
     val countries = remember { loadCountriesFromAssets(context) }
-
-    var message by rememberSaveable { mutableStateOf("") }
-    var flagGuessed by rememberSaveable { mutableStateOf(false) }
-    var currentCountryIndex by rememberSaveable { mutableIntStateOf(0) }
-
-    val currentCountry = countries[currentCountryIndex]
+    val currentCountry by remember { mutableStateOf(countries.random()) }
     val countryToGuess = currentCountry.countryName
+    val wrongCountry1 by remember { mutableStateOf(countries.random()) }
+    val wrongCountry2 by remember { mutableStateOf(countries.random()) }
+    var message by remember { mutableStateOf("") }
+    var flagGuessed by remember { mutableStateOf(false) }
 
-    val countryList = mutableListOf(currentCountry).apply {
-        addAll(countries.shuffled().take(2))
-    }.shuffled()
+
+    val countryList = mutableListOf(currentCountry, wrongCountry1, wrongCountry2)
+    countryList.shuffle()
+    val x = remember { countryList[0] }
+    val y = remember { countryList[1] }
+    val z = remember { countryList[2] }
+
+
 
     if (!flagGuessed) {
         Column(
@@ -55,22 +81,51 @@ fun GuessTheFlag() {
         ) {
             Text(text = countryToGuess)
 
-            countryList.forEach { country ->
-                Image(
-                    painter = painterResource(id = getDrawableResourceId(country.countryCode.lowercase())),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clickable {
-                            message = if (country.countryName == countryToGuess) {
-                                "CORRECT!"
-                            } else {
-                                "WRONG!"
-                            }
+            Image(
+                painter = painterResource(id = getDrawableResourceId(x.countryCode.lowercase())),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clickable {
+                        message = if (x.countryName == countryToGuess) {
+                            "CORRECT!"
+                        } else {
+                            "WRONG!"
                         }
-                )
-            }
+                    }
+            )
+
+            Image(
+                painter = painterResource(id = getDrawableResourceId(y.countryCode.lowercase())),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clickable {
+                        message = if (y.countryName == countryToGuess) {
+                            "CORRECT!"
+                        } else {
+                            "WRONG!"
+                        }
+                    }
+
+            )
+
+            Image(
+                painter = painterResource(id = getDrawableResourceId(z.countryCode.lowercase())),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clickable {
+                        message = if (z.countryName == countryToGuess) {
+                            "CORRECT!"
+                        } else {
+                            "WRONG!"
+                        }
+                    }
+            )
 
             Text(
                 text = message,
@@ -79,14 +134,16 @@ fun GuessTheFlag() {
             )
             Button(
                 onClick = {
-                    currentCountryIndex = (currentCountryIndex + 1) % countries.size
-                    message = ""
-                    flagGuessed = false
-                },
-                modifier = Modifier.align(Alignment.End)
+                    flagGuessed = true
+                }, modifier = Modifier.align(Alignment.End)
             ) {
                 Text(text = "Next")
+
             }
         }
+    } else {
+        GuessTheFlag()
     }
+
 }
+

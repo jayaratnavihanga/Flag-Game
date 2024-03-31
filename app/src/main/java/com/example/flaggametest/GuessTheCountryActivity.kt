@@ -27,35 +27,32 @@ class GuessTheCountryActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             FlagGameTestTheme {
+                // A surface container using the 'background' color from the theme
                 GuessTheCountry()
             }
         }
     }
+
+
 }
+
 
 @Composable
 fun GuessTheCountry() {
     val context = LocalContext.current
     val countries = remember { loadCountriesFromAssets(context) }
-
-    var currentCountryIndex by rememberSaveable { mutableIntStateOf(0) }
-    var selectedCountry by rememberSaveable { mutableStateOf<String?>(null) }
-    var submitted by rememberSaveable { mutableStateOf(false) }
-
-    val currentCountry = countries[currentCountryIndex]
+    var currentCountry by remember { mutableStateOf(countries.random()) }
     val countryNameList = countries.map { it.countryName }
+    var selectedCountry by remember { mutableStateOf<String?>(null) }
+    var submitted by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Column {
         Image(
             painter = painterResource(id = getDrawableResourceId(currentCountry.countryCode.lowercase())),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp),
-            contentScale = ContentScale.FillWidth
+                .height(200.dp)
         )
 
         LazyColumn(
@@ -89,7 +86,7 @@ fun GuessTheCountry() {
 
             Button(
                 onClick = {
-                    currentCountryIndex = (currentCountryIndex + 1) % countries.size
+                    currentCountry = countries.random()
                     selectedCountry = null
                     submitted = false
                 },
