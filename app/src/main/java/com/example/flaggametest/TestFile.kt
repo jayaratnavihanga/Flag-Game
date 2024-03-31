@@ -1,74 +1,65 @@
 package com.example.flaggametest
 
-import android.content.Intent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 
-
 @Composable
-fun Test() {
+fun MyApp() {
+    val viewModel: MyViewModel = remember { MyViewModel() }
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp.dp
+    val screenHeightDp = configuration.screenHeightDp.dp
 
-    Column(
-    modifier = Modifier.fillMaxSize(),
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally
-    )
-    {
-        Button(
-            modifier = Modifier
-                .height(50.dp)
-                .width(200.dp),
-            onClick = {
-
-
-            }
-        ) {
-            Text(text = "Guess the Country")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp)) // Add spacing between buttons
-
-        Button(
-            modifier = Modifier
-                .height(50.dp)
-                .width(200.dp),
-            onClick = { /*TODO*/ }
-        ) {
-            Text(text = "Guess-Hints")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp)) // Add spacing between buttons
-
-        Button(
-            modifier = Modifier
-                .height(50.dp)
-                .width(200.dp),
-            onClick = { /*TODO*/ }
-        ) {
-            Text(text = "Guess the Flag")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp)) // Add spacing between buttons
-
-        Button(
-            modifier = Modifier
-                .height(50.dp)
-                .width(200.dp),
-            onClick = { /*TODO*/ }
-        ) {
-            Text(text = "Advanced Level")
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Your UI components here
+            Text("Screen Width: $screenWidthDp")
+            Text("Screen Height: $screenHeightDp")
+            MyList(viewModel.items)
         }
     }
 }
+
+@Composable
+fun MyList(items: List<String>) {
+    LazyColumn {
+        items(items) { item ->
+            Text(text = item)
+        }
+    }
+}
+
+class MyViewModel {
+    var items by mutableStateOf(List(100) { "Item $it" })
+}
+
+@Composable
+fun MyScreen() {
+    val viewModel: MyViewModel = remember { MyViewModel() }
+    val context = LocalContext.current
+    val screenWidth = with(LocalDensity.current) { context.resources.configuration.screenWidthDp.dp }
+    val screenHeight = with(LocalDensity.current) { context.resources.configuration.screenHeightDp.dp }
+
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Text(text = "Screen Width: $screenWidth")
+            Text(text = "Screen Height: $screenHeight")
+            MyList(items = viewModel.items)
+        }
+    }
+}
+
+
+
 
 

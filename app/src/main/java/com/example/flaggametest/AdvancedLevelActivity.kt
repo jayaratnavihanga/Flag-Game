@@ -51,11 +51,7 @@ class AdvancedLevelActivity : ComponentActivity() {
         }
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        // Handle configuration changes here
-        // For example, you may want to re-layout your UI elements
-    }
+
 
 }
 @Composable

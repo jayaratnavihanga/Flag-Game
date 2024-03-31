@@ -1,21 +1,13 @@
 package com.example.flaggametest
 
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -27,56 +19,45 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.flaggametest.ui.theme.FlagGameTestTheme
+
 
 class GuessHintsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             FlagGameTestTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    GuessHints()
-                }
+                GuessHints()
             }
         }
     }
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        // Handle configuration changes here
-        // For example, you may want to re-layout your UI elements
-    }
-
-
 }
 
 @Composable
 fun GuessHints() {
     val context = LocalContext.current
     val countries = remember { loadCountriesFromAssets(context) }
-    val currentCountry by remember { mutableStateOf(countries.random()) }
-    val countryToGuess = currentCountry.countryName
-    var guessedWord by remember { mutableStateOf("-".repeat(countryToGuess.length)) }
+
     var remainingAttempts by remember { mutableIntStateOf(3) }
-    var userInput by remember { mutableStateOf(TextFieldValue()) }
     var isNext by remember { mutableStateOf(false) }
-    var gameWon by remember { mutableStateOf(false) }
+    val gameWon by remember { mutableStateOf(false) }
+    var currentCountryIndex by remember { mutableIntStateOf(0) }
 
+    val currentCountry = remember { countries[currentCountryIndex] }
+    val countryToGuess = remember { currentCountry.countryName }
 
+    var guessedWord by remember { mutableStateOf("-".repeat(countryToGuess.length)) }
+    var userInput by remember { mutableStateOf(TextFieldValue()) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        if (!gameWon) {
+    if (!gameWon) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
             Image(
                 painter = painterResource(id = getDrawableResourceId(currentCountry.countryCode.lowercase())),
                 contentDescription = null,
@@ -100,7 +81,8 @@ fun GuessHints() {
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
-            if (guessedWord != countryToGuess) {
+
+            if (guessedWord != countryToGuess && remainingAttempts > 0) {
                 Button(
                     onClick = {
                         if (userInput.text.isNotEmpty()) {
@@ -121,9 +103,6 @@ fun GuessHints() {
                                 }
                             } else {
                                 remainingAttempts--
-                                if (remainingAttempts == 0) {
-                                    guessedWord = countryToGuess
-                                }
                             }
                         }
                         userInput = TextFieldValue()
@@ -149,17 +128,15 @@ fun GuessHints() {
                 )
                 Button(
                     onClick = {
-                        gameWon = true
+                        currentCountryIndex = (currentCountryIndex + 1) % countries.size
+                        remainingAttempts = 3
+                        guessedWord = "-".repeat(countryToGuess.length)
+                        isNext = false
                     }, modifier = Modifier.align(Alignment.End)
                 ) {
                     Text(text = "Next")
-
                 }
             }
-
-
-        } else {
-            GameScreen()
         }
     }
 }
