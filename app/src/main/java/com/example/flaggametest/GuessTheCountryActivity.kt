@@ -4,19 +4,18 @@ package com.example.flaggametest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -46,17 +45,23 @@ fun GuessTheCountry() {
     var selectedCountry by remember { mutableStateOf<String?>(null) }
     var submitted by remember { mutableStateOf(false) }
 
-    Column {
+    Column(
+        Modifier.fillMaxSize(),
+        Arrangement.Top,
+        Alignment.CenterHorizontally
+    ) {
         Image(
             painter = painterResource(id = getDrawableResourceId(currentCountry.countryCode.lowercase())),
             contentDescription = null,
             modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
+                .padding(top = 10.dp)
+                .border(BorderStroke(5.dp, Color.Black))
         )
 
         LazyColumn(
+
             modifier = Modifier.weight(1f)
+                .height(300.dp)
         ) {
             items(countryNameList) { countryName ->
                 val isSelected = countryName == selectedCountry
@@ -73,40 +78,63 @@ fun GuessTheCountry() {
             }
         }
 
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Button(
-                onClick = { submitted = true },
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Text("Submit")
+        SubmitNextButton(
+            onClickSubmit = {
+                submitted = true
+            },
+            onNextClicked = {
+                currentCountry = countries.random()
+                selectedCountry = null
+                submitted = false
             }
+        )
 
-            Button(
-                onClick = {
-                    currentCountry = countries.random()
-                    selectedCountry = null
-                    submitted = false
-                },
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Text("Next")
-            }
-        }
-
-        // Display a message when the submit button is clicked
         if (submitted) {
             val isCorrect = selectedCountry == currentCountry.countryName
             val message = if (isCorrect) "Correct!" else "Incorrect!"
             val color = if (isCorrect) Color.Green else Color.Red
 
-            Text(
-                text = message,
-                color = color,
-                modifier = Modifier.padding(16.dp)
-            )
+            Row {
+                Text(
+                    text = message,
+                    color = color,
+                    modifier = Modifier.padding(16.dp)
+                )
+                if (!isCorrect) {
+                    Text(
+                        text = currentCountry.countryName,
+                        color = Color.Blue,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+
+            }
+        }
+    }
+}
+
+@Composable
+fun SubmitNextButton(
+    onClickSubmit: () -> Unit,
+    onNextClicked: () -> Unit
+) {
+    val isSubmitted = remember { mutableStateOf(false) }
+
+    val buttonText = if (isSubmitted.value) "Next" else "Submit"
+
+    Row {
+        Button(
+            onClick = {
+                if (isSubmitted.value) {
+                    onNextClicked()
+                } else {
+                    onClickSubmit()
+                }
+                isSubmitted.value = !isSubmitted.value
+            },
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text(text = buttonText)
         }
     }
 }

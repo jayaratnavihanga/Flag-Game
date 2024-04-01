@@ -2,17 +2,24 @@ package com.example.flaggametest
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,12 +31,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.flaggametest.ui.theme.FlagGameTestTheme
+import java.time.format.TextStyle
 
 class GuessHintsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,13 +48,14 @@ class GuessHintsActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = Color.White
                 ) {
                     GuessHints()
                 }
             }
         }
     }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         // Handle configuration changes here
@@ -65,6 +75,7 @@ fun GuessHints() {
     var remainingAttempts by remember { mutableIntStateOf(3) }
     var userInput by remember { mutableStateOf(TextFieldValue()) }
     var isNext by remember { mutableStateOf(false) }
+    var isCorrect by remember { mutableStateOf(false) }
     var gameWon by remember { mutableStateOf(false) }
 
 
@@ -76,20 +87,21 @@ fun GuessHints() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+
         if (!gameWon) {
             Image(
                 painter = painterResource(id = getDrawableResourceId(currentCountry.countryCode.lowercase())),
                 contentDescription = null,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
+                    .padding(top = 10.dp)
+                    .border(BorderStroke(5.dp, Color.Black))
+
             )
 
-            Text(text = countryToGuess)
 
             Text(
                 text = guessedWord,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.headlineLarge
             )
 
             BasicTextField(
@@ -98,7 +110,13 @@ fun GuessHints() {
                     userInput = it
                 },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth()
+                textStyle = LocalTextStyle.current.copy(fontSize = 28.sp)
+
+                ,
+                        modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .border(1.dp, Color.Black)
             )
             if (guessedWord != countryToGuess) {
                 Button(
@@ -117,7 +135,7 @@ fun GuessHints() {
                                     }
                                 }.joinToString("")
                                 if (guessedWord.equals(countryToGuess, ignoreCase = true)) {
-                                    isNext = true
+                                    isCorrect = true
                                 }
                             } else {
                                 remainingAttempts--
@@ -135,31 +153,50 @@ fun GuessHints() {
             }
 
             if (remainingAttempts == 0) {
-                Text(
-                    text = "Wrong! The country is $countryToGuess",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+               Row {
+
+                   Text(
+                       text = "WRONG!    ",
+                       color = Color.Red,
+                       style = MaterialTheme.typography.bodyLarge
+                   )
+
+
+                   Text(
+                       text = countryToGuess,
+                       color = Color.Blue,
+                       style = MaterialTheme.typography.bodyMedium
+                   )
+               }
                 isNext = true
             }
 
-            if (isNext) {
+            if (isCorrect) {
                 Text(
-                    text = "Correct!",
-                    style = MaterialTheme.typography.bodyMedium
+                    text = "CORRECT!",
+                    color = Color.Green,
+                    style = MaterialTheme.typography.headlineLarge
                 )
+                isNext=true
+
+
+            }
+            if (isNext){
                 Button(
                     onClick = {
                         gameWon = true
-                    }, modifier = Modifier.align(Alignment.End)
+                    },
                 ) {
                     Text(text = "Next")
 
                 }
             }
 
+            Text(text = countryToGuess)
+
 
         } else {
-            GameScreen()
+            GuessHints()
         }
     }
 }

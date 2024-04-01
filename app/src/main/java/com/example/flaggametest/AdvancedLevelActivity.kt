@@ -1,6 +1,5 @@
 package com.example.flaggametest
 
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,6 +23,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.flaggametest.ui.theme.FlagGameTestTheme
 
@@ -58,7 +57,7 @@ class AdvancedLevelActivity : ComponentActivity() {
 fun AdvancedLevel() {
     val context = LocalContext.current
     val countries = remember { loadCountriesFromAssets(context) }
-    var incorrectAttempts by remember { mutableStateOf(0) }
+    var incorrectAttempts by remember { mutableIntStateOf(0) }
     var message by remember { mutableStateOf("") }
     var flagGuessed by remember { mutableStateOf(false) }
     var userInput1 by remember { mutableStateOf("") }
@@ -67,11 +66,11 @@ fun AdvancedLevel() {
     var input1Correct by remember { mutableStateOf(false) }
     var input2Correct by remember { mutableStateOf(false) }
     var input3Correct by remember { mutableStateOf(false) }
-    var correctCountries = remember { mutableStateOf<List<String>>(emptyList()) }
+    val correctCountries = remember { mutableStateOf<List<String>>(emptyList()) }
     var flag1 by remember { mutableStateOf(countries.random()) }
     var flag2 by remember { mutableStateOf(countries.random()) }
     var flag3 by remember { mutableStateOf(countries.random()) }
-    var score by remember { mutableStateOf(0) }
+    var score by remember { mutableIntStateOf(0) }
 
 
     fun checkAnswers() {
@@ -79,9 +78,9 @@ fun AdvancedLevel() {
         input2Correct = userInput2.equals(flag2.countryName, ignoreCase = true)
         input3Correct = userInput3.equals(flag3.countryName, ignoreCase = true)
 
-        if (!input1Correct) correctCountries.value = correctCountries.value + flag1.countryName
-        if (!input2Correct) correctCountries.value = correctCountries.value + flag2.countryName
-        if (!input3Correct) correctCountries.value = correctCountries.value + flag3.countryName
+        if (!input1Correct) correctCountries.value += flag1.countryName
+        if (!input2Correct) correctCountries.value += flag2.countryName
+        if (!input3Correct) correctCountries.value += flag3.countryName
 
         if (input1Correct && input2Correct && input3Correct) {
             message = "CORRECT!"
@@ -110,7 +109,7 @@ fun AdvancedLevel() {
         flag3 = countries.random()
     }
 
-    Column(
+   Column(
 
         modifier = Modifier
             .fillMaxSize()
