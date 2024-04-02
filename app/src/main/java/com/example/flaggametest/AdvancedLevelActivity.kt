@@ -19,9 +19,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -46,14 +50,16 @@ class AdvancedLevelActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AdvancedLevel()                }
+                    AdvancedLevel()
+                }
             }
         }
     }
 
 
-
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdvancedLevel() {
     val context = LocalContext.current
@@ -95,9 +101,9 @@ fun AdvancedLevel() {
             message = "Incorrect! Try again."
             incorrectAttempts++
             if (incorrectAttempts == 3) {
-                if (input1Correct)score++
-                if (input2Correct)score++
-                if (input3Correct)score++
+                if (input1Correct) score++
+                if (input2Correct) score++
+                if (input3Correct) score++
 
                 message = "WRONG!"
             }
@@ -120,14 +126,21 @@ fun AdvancedLevel() {
         flag3 = countries.random()
     }
 
-   Column(
-
+    Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        TopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.Black,
+                titleContentColor = Color.White,
+            ),
+            title = {
+                Text("Advanced Level")
+            }
+        )
 
 
         Text(
@@ -163,7 +176,7 @@ fun AdvancedLevel() {
                     .fillMaxWidth()
                     .border(
                         width = 1.dp,
-                        color = if (input1Correct) Color.Gray else Color.Red,
+                        color = if (input1Correct) Color.Gray else Color.Black,
                         shape = RoundedCornerShape(4.dp)
                     )
                     .background(if (input1Correct) Color.LightGray else Color.White)
@@ -206,7 +219,7 @@ fun AdvancedLevel() {
                     .fillMaxWidth()
                     .border(
                         width = 1.dp,
-                        color = if (input2Correct) Color.Gray else Color.Red,
+                        color = if (input2Correct) Color.Gray else Color.Black,
                         shape = RoundedCornerShape(4.dp)
                     )
                     .background(if (input2Correct) Color.LightGray else Color.White)
@@ -232,7 +245,8 @@ fun AdvancedLevel() {
                 modifier = Modifier
                     .width(150.dp)
                     .height(150.dp)
-                    .padding(4.dp))
+                    .padding(4.dp)
+            )
         }
 
         Row(
@@ -248,7 +262,7 @@ fun AdvancedLevel() {
                     .fillMaxWidth()
                     .border(
                         width = 1.dp,
-                        color = if (input3Correct) Color.Gray else Color.Red,
+                        color = if (input3Correct) Color.Gray else Color.Black,
                         shape = RoundedCornerShape(4.dp)
                     )
                     .background(if (input3Correct) Color.LightGray else Color.White)
@@ -262,7 +276,7 @@ fun AdvancedLevel() {
                 color = Color.Blue,
                 modifier = Modifier.padding(top = 8.dp, start = 8.dp)
             )
-            flagGuessed=true
+            flagGuessed = true
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -277,7 +291,8 @@ fun AdvancedLevel() {
                     resetGame()
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            colors = ButtonDefaults.buttonColors(Color.Black)
+
         ) {
             Text(text = if (flagGuessed) "Next" else "Submit")
         }
@@ -297,9 +312,5 @@ fun AdvancedLevel() {
             color = if (message == "CORRECT!") Color.Green else Color.Red,
             modifier = Modifier.padding(top = 8.dp)
         )
-
-
-
-
     }
 }

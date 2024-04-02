@@ -16,9 +16,13 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
 
@@ -40,9 +44,19 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
     val context = LocalContext.current
+    TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color.Black,
+            titleContentColor = Color.White,
+        ),
+        title = {
+            Text("  Flag Game")
+        }
+    )
 
 
     Column(
@@ -57,12 +71,11 @@ fun MainScreen() {
                 context.startActivity(navigate)
             },
             modifier = Modifier
-
                 .height(50.dp)
                 .width(200.dp)
                 .padding(vertical = 8.dp)
         ) {
-            Text(text = "Guess the Country", color = Color.Black) // Set text color to white for better visibility
+            Text(text = "Guess the Country", color = Color.Black)
         }
 
 
@@ -71,13 +84,12 @@ fun MainScreen() {
                 val navigate = Intent(context, GuessHintsActivity::class.java)
                 context.startActivity(navigate)
             },
-            shape = RoundedCornerShape(8.dp),
             modifier = Modifier
                 .height(50.dp)
                 .width(200.dp)
                 .padding(vertical = 8.dp)
         ) {
-            Text(text = "Guess-Hints")
+            Text(text = "Guess-Hints", color = Color.Black)
         }
 
         OutlinedButton(
@@ -85,13 +97,12 @@ fun MainScreen() {
                 val navigate = Intent(context, GuessTheFlagActivity::class.java)
                 context.startActivity(navigate)
             },
-            shape = RoundedCornerShape(8.dp),
             modifier = Modifier
                 .height(50.dp)
                 .width(200.dp)
                 .padding(vertical = 8.dp)
         ) {
-            Text(text = "Guess the Flag")
+            Text(text = "Guess the Flag", color = Color.Black)
         }
 
         OutlinedButton(
@@ -99,13 +110,12 @@ fun MainScreen() {
                 val navigate = Intent(context, AdvancedLevelActivity::class.java)
                 context.startActivity(navigate)
             },
-            shape = RoundedCornerShape(8.dp),
             modifier = Modifier
                 .height(50.dp)
                 .width(200.dp)
                 .padding(vertical = 8.dp)
         ) {
-            Text(text = "Advanced Level")
+            Text(text = "Advanced Level", color = Color.Black)
         }
     }
 }

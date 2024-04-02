@@ -18,12 +18,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -33,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
@@ -56,16 +62,9 @@ class GuessHintsActivity : ComponentActivity() {
             }
         }
     }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        // Handle configuration changes here
-        // For example, you may want to re-layout your UI elements
-    }
-
-
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GuessHints() {
     val context = LocalContext.current
@@ -78,49 +77,58 @@ fun GuessHints() {
     var isNext by remember { mutableStateOf(false) }
     var isCorrect by remember { mutableStateOf(false) }
     var gameWon by remember { mutableStateOf(false) }
+    var displayWord by remember { mutableStateOf("") }
     Log.d("Country name", currentCountry.toString())
-
-
-
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        TopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.Black,
+                titleContentColor = Color.White,
+            ),
+            title = {
+                Text("Guess Hints")
+            }
+        )
 
         if (!gameWon) {
             Image(
                 painter = painterResource(id = getDrawableResourceId(currentCountry.countryCode.lowercase())),
                 contentDescription = null,
                 modifier = Modifier
-                    .padding(top = 10.dp)
-                    .border(BorderStroke(5.dp, Color.Black))
-
+                    .padding(50.dp)
+                    .border(color = Color.Black, width = 5.dp),
             )
 
-
+            displayWord = if (remainingAttempts != 0) {
+                guessedWord
+            } else {""}
             Text(
-                text = guessedWord,
+                text = displayWord,
                 style = MaterialTheme.typography.headlineLarge
             )
+            Row {
+                BasicTextField(
+                    value = userInput,
+                    onValueChange = {
+                        userInput = it
+                    },
+                    singleLine = true,
+                    textStyle = LocalTextStyle.current.copy(fontSize = 28.sp),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .width(50.dp)
+                        .height(50.dp)
+                        .border(2.dp, Color.Black)
+                )
+            }
 
-            BasicTextField(
-                value = userInput,
-                onValueChange = {
-                    userInput = it
-                },
-                singleLine = true,
-                textStyle = LocalTextStyle.current.copy(fontSize = 28.sp)
-
-                ,
-                        modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .border(1.dp, Color.Black)
-            )
+            Spacer(modifier = Modifier.height(50.dp))
             if (guessedWord != countryToGuess) {
                 Button(
                     onClick = {
@@ -149,28 +157,29 @@ fun GuessHints() {
                         }
                         userInput = TextFieldValue()
                     },
-                    modifier = Modifier.align(Alignment.End)
-                ) {
+                    colors = ButtonDefaults.buttonColors(Color.Black),
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+
+                    ) {
                     Text(text = "Submit")
                 }
             }
 
             if (remainingAttempts == 0) {
-               Row {
+                Row {
 
-                   Text(
-                       text = "WRONG!    ",
-                       color = Color.Red,
-                       style = MaterialTheme.typography.bodyLarge
-                   )
+                    Text(
+                        text = "WRONG!    ",
+                        color = Color.Red,
+                        style = MaterialTheme.typography.headlineLarge
+                    )
 
-
-                   Text(
-                       text = countryToGuess,
-                       color = Color.Blue,
-                       style = MaterialTheme.typography.bodyMedium
-                   )
-               }
+                    Text(
+                        text = countryToGuess,
+                        color = Color.Blue,
+                        style = MaterialTheme.typography.headlineLarge
+                    )
+                }
                 isNext = true
             }
 
@@ -180,24 +189,19 @@ fun GuessHints() {
                     color = Color.Green,
                     style = MaterialTheme.typography.headlineLarge
                 )
-                isNext=true
-
-
+                isNext = true
             }
-            if (isNext){
+
+            if (isNext) {
                 Button(
                     onClick = {
                         gameWon = true
                     },
+                    colors = ButtonDefaults.buttonColors(Color.Black), // Set background color to black
                 ) {
                     Text(text = "Next")
-
                 }
             }
-
-            Text(text = countryToGuess)
-
-
         } else {
             GuessHints()
         }

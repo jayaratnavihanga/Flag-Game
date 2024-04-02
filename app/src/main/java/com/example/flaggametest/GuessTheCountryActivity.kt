@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,6 +38,7 @@ class GuessTheCountryActivity : ComponentActivity() {
     }
 
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun GuessTheCountry() {
         val context = LocalContext.current
@@ -57,21 +59,34 @@ class GuessTheCountryActivity : ComponentActivity() {
 
 
 
+
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Black,
+                    titleContentColor = Color.White,
+                ),
+                title = {
+                    Text("Guess The Country")
+                }
+            )
             Image(
                 painter = painterResource(id = getDrawableResourceId(currentCountry.countryCode.lowercase())),
                 contentDescription = null,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                contentScale = ContentScale.FillWidth
+                    .padding(10.dp)
+                    .border(color = Color.Black, width = 5.dp),
+                contentScale = ContentScale.FillWidth,
+
             )
 
             LazyColumn(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .height(250.dp)
             ) {
                 items(countryNameList) { countryName ->
                     val isSelected = countryName == selectedCountry
@@ -88,18 +103,19 @@ class GuessTheCountryActivity : ComponentActivity() {
                 }
             }
 
-            Button(onClick = {
-                if (buttonCount == 0) {
-                    buttonText = "Next"
-                    buttonCount++
-                    submitted = true
-
-                } else {
-                    activity.finish()
-                    activity.startActivity(activity.intent)
-
-                }
-            }) {
+            Button(
+                onClick = {
+                    if (buttonCount == 0) {
+                        buttonText = "Next"
+                        buttonCount++
+                        submitted = true
+                    } else {
+                        activity.finish()
+                        activity.startActivity(activity.intent)
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(Color.Black)
+            ) {
                 Text(text = buttonText)
             }
 
