@@ -12,91 +12,111 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.ui.Alignment
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Brush
+
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.flaggametest.ui.theme.FlagGameTestTheme
 
 
-open class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
-
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            )
-            {
-                Button(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .width(200.dp),
-                    onClick = {
-                        val navigate =
-                            Intent(this@MainActivity, GuessTheCountryActivity::class.java)
-                        startActivity(navigate)
-
-
-                    }
-                ) {
-                    Text(text = "Guess the Country")
-                }
-
-                Spacer(modifier = Modifier.height(16.dp)) // Add spacing between buttons
-
-                Button(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .width(200.dp),
-                    onClick = {
-                        val navigate = Intent(this@MainActivity, GuessHintsActivity::class.java)
-                        startActivity(navigate)
-                    }
-                ) {
-                    Text(text = "Guess-Hints")
-                }
-
-                Spacer(modifier = Modifier.height(16.dp)) // Add spacing between buttons
-
-                Button(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .width(200.dp),
-                    onClick = {
-                        val navigate = Intent(this@MainActivity, GuessTheFlagActivity::class.java)
-                        startActivity(navigate)
-
-                    }
-                ) {
-                    Text(text = "Guess the Flag")
-                }
-
-                Spacer(modifier = Modifier.height(16.dp)) // Add spacing between buttons
-
-                Button(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .width(200.dp),
-                    onClick = {
-                        val navigate = Intent(this@MainActivity, AdvancedLevelActivity::class.java)
-                        startActivity(navigate)
-                    }
-                ) {
-                    Text(text = "Advanced Level")
-                }
+            FlagGameTestTheme {
+                MainScreen()
             }
         }
     }
 }
 
+@Composable
+fun MainScreen() {
+    val context = LocalContext.current
 
 
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OutlinedButton(
+            onClick = {
+                val navigate = Intent(context, GuessTheCountryActivity::class.java)
+                context.startActivity(navigate)
+            },
+            modifier = Modifier
+
+                .height(50.dp)
+                .width(200.dp)
+                .padding(vertical = 8.dp)
+        ) {
+            Text(text = "Guess the Country", color = Color.Black) // Set text color to white for better visibility
+        }
 
 
+        OutlinedButton(
+            onClick = {
+                val navigate = Intent(context, GuessHintsActivity::class.java)
+                context.startActivity(navigate)
+            },
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .height(50.dp)
+                .width(200.dp)
+                .padding(vertical = 8.dp)
+        ) {
+            Text(text = "Guess-Hints")
+        }
 
+        OutlinedButton(
+            onClick = {
+                val navigate = Intent(context, GuessTheFlagActivity::class.java)
+                context.startActivity(navigate)
+            },
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .height(50.dp)
+                .width(200.dp)
+                .padding(vertical = 8.dp)
+        ) {
+            Text(text = "Guess the Flag")
+        }
 
+        OutlinedButton(
+            onClick = {
+                val navigate = Intent(context, AdvancedLevelActivity::class.java)
+                context.startActivity(navigate)
+            },
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .height(50.dp)
+                .width(200.dp)
+                .padding(vertical = 8.dp)
+        ) {
+            Text(text = "Advanced Level")
+        }
+    }
+}
 
-
-
+@Preview
+@Composable
+fun MainScreenPreview() {
+    FlagGameTestTheme {
+        MainScreen()
+    }
+}
 
 
 

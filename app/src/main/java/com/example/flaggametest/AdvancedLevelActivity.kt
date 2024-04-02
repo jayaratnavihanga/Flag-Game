@@ -1,6 +1,7 @@
 package com.example.flaggametest
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -71,12 +72,18 @@ fun AdvancedLevel() {
     var flag2 by remember { mutableStateOf(countries.random()) }
     var flag3 by remember { mutableStateOf(countries.random()) }
     var score by remember { mutableIntStateOf(0) }
+    Log.d("Flag 1", flag1.toString())
+    Log.d("Flag 2", flag2.toString())
+    Log.d("Flag 3", flag3.toString())
+
+
 
 
     fun checkAnswers() {
         input1Correct = userInput1.equals(flag1.countryName, ignoreCase = true)
         input2Correct = userInput2.equals(flag2.countryName, ignoreCase = true)
         input3Correct = userInput3.equals(flag3.countryName, ignoreCase = true)
+
 
         if (!input1Correct) correctCountries.value += flag1.countryName
         if (!input2Correct) correctCountries.value += flag2.countryName
@@ -88,6 +95,10 @@ fun AdvancedLevel() {
             message = "Incorrect! Try again."
             incorrectAttempts++
             if (incorrectAttempts == 3) {
+                if (input1Correct)score++
+                if (input2Correct)score++
+                if (input3Correct)score++
+
                 message = "WRONG!"
             }
         }
@@ -117,10 +128,7 @@ fun AdvancedLevel() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = "Countries: ${flag1.countryName}, ${flag2.countryName}, ${flag3.countryName}",
-            modifier = Modifier.padding(top = 16.dp)
-        )
+
 
         Text(
             text = "Score: $score",
@@ -289,24 +297,7 @@ fun AdvancedLevel() {
             color = if (message == "CORRECT!") Color.Green else Color.Red,
             modifier = Modifier.padding(top = 8.dp)
         )
-        Text(
-            text = "Countries: ${flag1.countryName}, ${flag2.countryName}, ${flag3.countryName}",
-            modifier = Modifier.padding(top = 16.dp)
-        )
 
-        if (flagGuessed){
-            if (input1Correct){
-                score++
-
-            }
-            if (input2Correct){
-                score++
-            }
-            if (input3Correct){
-                score++
-            }
-
-        }
 
 
 

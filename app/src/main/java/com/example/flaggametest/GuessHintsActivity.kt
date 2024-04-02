@@ -2,6 +2,7 @@ package com.example.flaggametest
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -77,6 +78,8 @@ fun GuessHints() {
     var isNext by remember { mutableStateOf(false) }
     var isCorrect by remember { mutableStateOf(false) }
     var gameWon by remember { mutableStateOf(false) }
+    Log.d("Country name", currentCountry.toString())
+
 
 
 
